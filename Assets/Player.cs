@@ -5,6 +5,8 @@ using UnityEngine;
 public class Player : PortalTraveller
 {
 
+    public static Player instance;
+
     public float forwardspeed = 5f;
     public float sideSpeed = 2f;
     public float jumporce = 200f;
@@ -18,11 +20,20 @@ public class Player : PortalTraveller
     public GameObject droppedPrefab;
 
     // Start is called before the first frame update
+
+    private void Awake()
+    {
+        instance = this;
+
+    }
+
     void Start()
     {
+
+
         rb = GetComponent<Rigidbody>();
 
-        StartCoroutine(TrailObjs());
+
     }
 
     // Update is called once per frame
@@ -44,15 +55,7 @@ public class Player : PortalTraveller
         }
     }
 
-    IEnumerator TrailObjs()
-    {
 
-        while(alive)
-        {
-            yield return new WaitForSeconds(dropsTime);
-            Instantiate(droppedPrefab, transform.position, transform.rotation);
-        }
-    }
 
 
     void OnCollisionEnter (Collision col)
