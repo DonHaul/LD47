@@ -1,9 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using UnityScript.Steps;
+
 
 public class UImanager : MonoBehaviour
 {
@@ -16,6 +14,10 @@ public class UImanager : MonoBehaviour
 
     public Text CountDowntext;
 
+    public Text deathquote;
+
+    public Text highscoreText;
+
     private void Awake()
     {
         instance = this;
@@ -24,13 +26,13 @@ public class UImanager : MonoBehaviour
     // Start is called before the first frame update
     public void GameStart()
     {
-        BtnPanel.active = false;
+        BtnPanel.SetActive(false);
     }
 
     // Update is called once per frame
     public void GameEnd()
     {
-        BtnPanel.active = true;
+        BtnPanel.SetActive(true);
         ButtonTexT.text = "Retry";
     }
 
@@ -47,5 +49,17 @@ public class UImanager : MonoBehaviour
     public void SetCountDownTxt(string text)
     {
         CountDowntext.text = text;
+
+
+    }
+
+    public void SetDeathQuote(string text)
+    {
+        deathquote.text = text;
+    }
+
+    public void SetHighscore(string text)
+    {
+        highscoreText.text = text;
     }
 }

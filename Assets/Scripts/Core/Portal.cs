@@ -118,7 +118,7 @@ public class Portal : MonoBehaviour {
         }
 
         // Unhide objects hidden at start of render
-        screen.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
+        screen.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
     }
 
     void HandleClipping () {
@@ -272,7 +272,10 @@ public class Portal : MonoBehaviour {
     }
 
     void OnTravellerEnterPortal (PortalTraveller traveller) {
+        //Debug.Log(gameObject.name);
+        //Debug.Log("Traveller in");
         if (!trackedTravellers.Contains (traveller)) {
+            //Debug.Log("Traveller ADDED");
             traveller.EnterPortalThreshold ();
             traveller.previousOffsetFromPortal = traveller.transform.position - transform.position;
             trackedTravellers.Add (traveller);
@@ -287,8 +290,12 @@ public class Portal : MonoBehaviour {
     }
 
     void OnTriggerExit (Collider other) {
+
+        //Debug.Log(gameObject.name);
+        //Debug.Log("Traveller out");
         var traveller = other.GetComponent<PortalTraveller> ();
         if (traveller && trackedTravellers.Contains (traveller)) {
+            //Debug.Log("Traveler Removed");
             traveller.ExitPortalThreshold ();
             trackedTravellers.Remove (traveller);
         }

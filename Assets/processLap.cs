@@ -8,12 +8,13 @@ public class processLap : MonoBehaviour
 
     Mesh mesh;
 
-    public float sideSize = 0.5f;
+    public Material[] mats;
 
-    int[] triangles;
+    public float sideSize = 0.4f;
+
+    
     int triIndex;
 
-    Vector3[] vertices;
 
     // Start is called before the first frame update
     Mesh GenerateMesh()
@@ -21,12 +22,17 @@ public class processLap : MonoBehaviour
         mesh = new Mesh();
 
 
+        int[] triangles;
+        Vector3[] vertices;
+
         //one corner of square per position
         vertices = new Vector3[GameManager.instance.LapPositions.Count * 4];
 
         //triangles = new int[(positions.Length - 1) *8];
 
         //all slices * Triangles per slice(8) * vertices per triangle (3)  + (2 triangles in beginnig)6
+
+        Debug.Log(GameManager.instance.LapPositions.Count - 1);
         triangles = new int[(GameManager.instance.LapPositions.Count - 1) * 8 * 3 + 6];
 
         //create vertices
@@ -105,9 +111,9 @@ public class processLap : MonoBehaviour
         mesh.Clear();
 
         mesh.vertices = vertices;
-        mesh.triangles = triangles; /* new int[] { 0,3,4,
-                                     4,3,7,
-        3,2,6,3,6,7};*/
+        mesh.triangles = triangles;
+
+
         return mesh;
     }
 
@@ -117,16 +123,23 @@ public class processLap : MonoBehaviour
         if (other.tag != "Player") return;
 
         Debug.Log("Lap");
+        AudionManager.instance.PlaySound("finish");
 
         GameObject meshGo = Instantiate(meshTrailfab,Vector3.zero,Quaternion.identity);
 
+        mesh = GenerateMesh();
+        meshGo.GetComponent<MeshRenderer>().sharedMaterial = mats[Random.Range(0,mats.Length)];
         meshGo.GetComponent<MeshFilter>().mesh = mesh;
+        meshGo.GetComponent<MeshCollider>().sharedMesh = mesh;
 
-        GenerateMesh();
+        Player.instance.forwardspeed += 2f;
 
-        GameManager.instance.LapPositions.Clear();
+        Debug.Log("Clear");
 
-        GameManager.instance.lapCount++;
+
+        GameManager.instance.Lap();
+
+       
 
         UImanager.instance.SetLaps(GameManager.instance.lapCount);
     }
