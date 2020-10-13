@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
-
+using UnityEngine.Advertisements;
 public class GameManager : MonoBehaviour
 {
     // Start is called before the first frame update
@@ -25,6 +25,9 @@ public class GameManager : MonoBehaviour
 
     public List<GameObject> obstaclesinstantiated;
 
+    string gameId = "3850037";
+    bool testMode = true;
+
     //0 initial
     //1 play
     //2 end
@@ -36,15 +39,39 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
     void Start()
     {
+
         instance = this;
 
         Player.instance.forwardspeed = 0;
+        if (Advertisement.isInitialized == false)
+        {
+            Advertisement.Initialize(gameId, testMode);
+
+        }
+        
+
 
         obstaclesinstantiated = new List<GameObject>();
 
         StartCoroutine(Countdown());
     }
 
+    public void ShowInterstitialAd()
+    {
+        if(Advertisement.isInitialized==false)
+        {
+            Advertisement.Initialize(gameId, testMode);
+
+        }
+        else   if (Advertisement.IsReady())
+        {
+            Advertisement.Show();
+        }
+        else
+        {
+            Debug.Log("Interstitial ad not ready at the moment! Please try again later!");
+        }
+    }
     IEnumerator Countdown()
     {
         float sec = 0.6f;
@@ -165,6 +192,11 @@ public class GameManager : MonoBehaviour
             UImanager.instance.SetHighscore("Highscore: " + PlayerPrefs.GetInt("highscore"));
         }
 
+
+        if(lapCount>1)
+        {
+            ShowInterstitialAd();
+        }
 
         AudionManager.instance.PlaySound("death");
         gameState = 2;
