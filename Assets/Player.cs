@@ -12,6 +12,9 @@ public class Player : PortalTraveller
     public float sideSpeed = 2f;
     public float jumpforce = 200f;
 
+
+    public TouchControllerSides2Side touchcontroller;
+
     public float dropsTime=0.2f;
 
     public bool alive = true;
@@ -30,6 +33,8 @@ public class Player : PortalTraveller
     // Start is called before the first frame update
 
     bool prevgrounded;
+
+    public bool phoneTesting;
 
 
 
@@ -61,7 +66,16 @@ public class Player : PortalTraveller
         {
             float side = Input.GetAxisRaw("Horizontal");
 
-        side = side * sideSpeed;
+
+            if (phoneTesting == false)
+            {
+                side = side * sideSpeed;
+            }
+            else
+            {
+                side = touchcontroller.fakeaxis * sideSpeed;
+            }
+       
 
         //Debug.Log(rb.velocity);
 
@@ -70,15 +84,16 @@ public class Player : PortalTraveller
         
         grounded = Physics.CheckBox(transform.position + Vector3.down * offset, groundColSize * 0.5f,Quaternion.identity,mask);
 
-        if (Input.GetKeyDown(KeyCode.Space) && grounded)
-        {
-            rb.AddForce(Vector3.up * jumpforce);
-            AudionManager.instance.PlaySound("jump");
+        if (Input.GetKeyDown(KeyCode.Space))
+            {
+                //Jump
+                Jump();
+            
         }
 
         if(grounded == true  && prevgrounded==false)
         {
-            AudionManager.instance.PlaySound("land");
+            AudioManager.instance.PlaySound("land");
         }
 
 
@@ -103,8 +118,14 @@ public class Player : PortalTraveller
         }
     }
 
-
-
+    public void Jump()
+    {
+        if (grounded)
+        {
+            rb.AddForce(Vector3.up * jumpforce);
+            AudioManager.instance.PlaySound("jump");
+        }
+    }
 
     void OnCollisionEnter (Collision col)
     {

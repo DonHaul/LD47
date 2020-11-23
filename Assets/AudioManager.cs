@@ -25,10 +25,10 @@
 }
 
 
-public class AudionManager : MonoBehaviour
+public class AudioManager : MonoBehaviour
 {
 
-    public static AudionManager instance;
+    public static AudioManager instance;
     public Sound[] sounds;
     public void Awake()
     {

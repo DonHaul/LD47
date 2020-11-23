@@ -122,8 +122,8 @@ public class processLap : MonoBehaviour
     {
         if (other.tag != "Player") return;
 
-        Debug.Log("Lap");
-        AudionManager.instance.PlaySound("finish");
+
+        AudioManager.instance.PlaySound("finish");
 
         GameObject meshGo = Instantiate(meshTrailfab,Vector3.zero,Quaternion.identity);
 

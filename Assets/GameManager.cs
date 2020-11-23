@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 using UnityEngine.Advertisements;
+using UnityEngine.UI;
+
 public class GameManager : MonoBehaviour
 {
     // Start is called before the first frame update
@@ -25,8 +27,21 @@ public class GameManager : MonoBehaviour
 
     public List<GameObject> obstaclesinstantiated;
 
+    public Text scoresText;
+    public Text playersText;
+    public InputField playerNameInput;
+
+
+
     string gameId = "3850037";
     bool testMode = true;
+
+    public string playerName;
+
+    dreamloLeaderBoard dl;
+    dreamloPromoCode pc;
+
+    List<dreamloLeaderBoard.Score> scoreList;
 
     //0 initial
     //1 play
@@ -39,6 +54,9 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
     void Start()
     {
+        dl = dreamloLeaderBoard.GetSceneDreamloLeaderboard();
+
+            
 
         instance = this;
 
@@ -78,20 +96,20 @@ public class GameManager : MonoBehaviour
         GenerateObstacles();
 
         UImanager.instance.SetCountDownTxt("3");
-        AudionManager.instance.PlaySound("321");
+        AudioManager.instance.PlaySound("321");
         yield return new WaitForSeconds(sec);
 
         UImanager.instance.SetCountDownTxt("2");
-        AudionManager.instance.PlaySound("321");
+        AudioManager.instance.PlaySound("321");
         yield return new WaitForSeconds(sec);
 
         UImanager.instance.SetCountDownTxt("1");
-        AudionManager.instance.PlaySound("321");
+        AudioManager.instance.PlaySound("321");
         yield return new WaitForSeconds(sec);
 
 
         UImanager.instance.SetCountDownTxt("GO!");
-        AudionManager.instance.PlaySound("go");
+        AudioManager.instance.PlaySound("go");
         yield return new WaitForSeconds(sec);
         UImanager.instance.SetCountDownTxt("");
         StartGame();
@@ -177,6 +195,12 @@ public class GameManager : MonoBehaviour
         }
     }
 
+
+    public void SubmitScore()
+    {
+        dl.AddScore(playerNameInput.text, lapCount);
+    }
+
     public void GameOver()
     {
         if (gameState == 2) return;
@@ -195,16 +219,76 @@ public class GameManager : MonoBehaviour
 
         if(lapCount>1)
         {
+            Debug.Log("SHOWADS");
             ShowInterstitialAd();
         }
 
-        AudionManager.instance.PlaySound("death");
+        AudioManager.instance.PlaySound("death");
         gameState = 2;
         capturing = false;
-        AudionManager.instance.GetComponent<AudioSource>().volume = 1;
-        AudionManager.instance.GetComponent<AudioSource>().pitch = 2.5f;
+        AudioManager.instance.GetComponent<AudioSource>().volume = 1;
+        AudioManager.instance.GetComponent<AudioSource>().pitch = 2.5f;
         UImanager.instance.BtnPanel.SetActive(true);
         UImanager.instance.SetDeathQuote(deathQuotes[Random.Range(0, deathQuotes.Length)]);
-        
+
+        //highscore stuff
+
+
+        // get the reference here...
+
+ 
+
+        // add the score...
+        if (dl.publicCode == "") Debug.LogError("You forgot to set the publicCode variable");
+        if (dl.privateCode == "") Debug.LogError("You forgot to set the privateCode variable");
+
+         
+
+        string players="";
+        string scores="";
+
+        bool playerintop10=false;
+
+
+        scoreList = dl.ToListHighToLow() ;
+        if (scoreList == null)
+                {
+                    
+                }
+                else
+                {
+                    int maxToDisplay = 10;
+                    int count = 0;
+                    foreach (dreamloLeaderBoard.Score currentScore in scoreList)
+                    {
+                        count++;
+                        players = players + count.ToString() + "." + currentScore.playerName+ "\n";
+                        scores = scores + currentScore.score.ToString() + "\n";
+
+                        if(currentScore.playerName==playerName)
+                {
+                    playerintop10 = true;
+                }
+
+          
+                        if (count >= maxToDisplay) break;
+                    }
+                }
+
+                 if(playerintop10==false)
+        {
+            players += "...\n";
+            scores += "...\n";
+
+            players += playerName+"\n";
+            scores += lapCount + "\n";
+
+        }
+
+
+        playersText.text = players;
+        scoresText.text = scores;
+
     }
+
 }
